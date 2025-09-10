@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔍 Определение казахского языка</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            padding: 40px;
+        }
+
+        .input-section {
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #333;
+            font-size: 1.1em;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 15px;
+            border: 2px solid #e1e8ed;
+            border-radius: 10px;
+            font-size: 16px;
+            font-family: inherit;
+            resize: vertical;
+            transition: border-color 0.3s ease;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        button {
+            flex: 1;
+            padding: 15px 25px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #6c757d;
+            border: 2px solid #e9ecef;
+        }
+
+        .btn-secondary:hover {
+            background: #e9ecef;
+        }
+
+        .results {
+            display: none;
+            margin-top: 30px;
+        }
+
+        .result-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border-left: 5px solid #667eea;
+        }
+
+        .result-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .language-badge {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-right: 15px;
+        }
+
+        .confidence-bar {
+            flex: 1;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 0 15px;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #28a745, #20c997);
+            transition: width 0.5s ease;
+        }
+
+        .confidence-text {
+            font-weight: 600;
+            color: #28a745;
+        }
+
+        .method-badge {
+            background: #6c757d;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            margin-left: 10px;
+        }
+
+        .analysis-section {
+            background: #fff;
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 20px;
+            border: 2px solid #e9ecef;
+        }
+
+        .analysis-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .analysis-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .analysis-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .analysis-item h4 {
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .analysis-item p {
+            color: #6c757d;
+            font-size: 0.9em;
+        }
+
+        .alternatives {
+            margin-top: 20px;
+        }
+
+        .alternatives h4 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .alternative-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 5px;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border-left: 5px solid #dc3545;
+        }
+
+        .examples {
+            background: #e3f2fd;
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 30px;
+        }
+
+        .examples h3 {
+            color: #1976d2;
+            margin-bottom: 15px;
+        }
+
+        .example-item {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .example-item:hover {
+            border-color: #1976d2;
+            transform: translateY(-2px);
+        }
+
+        .example-text {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .example-description {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 15px;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            .analysis-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 Определение казахского языка</h1>
+            <p>Поддерживает кириллический и латинский казахский</p>
+        </div>
+
+        <div class="main-content">
+            <div class="input-section">
+                <div class="input-group">
+                    <label for="textInput">Введите текст для анализа:</label>
+                    <textarea id="textInput" placeholder="Вставьте сюда текст на казахском языке (кириллица или латиница) или на другом языке для сравнения..."></textarea>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn-primary" onclick="detectLanguage()">🔍 Проверить</button>
+                    <button class="btn-secondary" onclick="clearText()">🗑️ Очистить</button>
+                </div>
+            </div>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Анализируем текст...</p>
+            </div>
+
+            <div class="results" id="results">
+                <!-- Результаты будут вставлены здесь -->
+            </div>
+
+            <div class="examples">
+                <h3>📝 Примеры для тестирования:</h3>
+                
+                <div class="example-item" onclick="setExample('men super balamyn')">
+                    <div class="example-text">men super balamyn</div>
+                    <div class="example-description">Латинский казахский (короткая фраза)</div>
+                </div>
+
+                <div class="example-item" onclick="setExample('Qazaqstan - menin Otanym!')">
+                    <div class="example-text">Qazaqstan - menin Otanym!</div>
+                    <div class="example-description">Латинский казахский (фраза про Родину)</div>
+                </div>
+
+                <div class="example-item" onclick="setExample('Қазақстан - менің Отаным!')">
+                    <div class="example-text">Қазақстан - менің Отаным!</div>
+                    <div class="example-description">Кириллический казахский</div>
+                </div>
+
+                <div class="example-item" onclick="setExample('Абай Құнанбайұлы қазақтың ұлы ақыны')">
+                    <div class="example-text">Абай Құнанбайұлы қазақтың ұлы ақыны</div>
+                    <div class="example-description">Кириллический казахский (про Абая)</div>
+                </div>
+
+                <div class="example-item" onclick="setExample('Казахстан - моя Родина!')">
+                    <div class="example-text">Казахстан - моя Родина!</div>
+                    <div class="example-description">Русский язык</div>
+                </div>
+
+                <div class="example-item" onclick="setExample('Kazakhstan is my homeland!')">
+                    <div class="example-text">Kazakhstan is my homeland!</div>
+                    <div class="example-description">Английский язык</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function setExample(text) {
+            document.getElementById('textInput').value = text;
+        }
+
+        function clearText() {
+            document.getElementById('textInput').value = '';
+            document.getElementById('results').style.display = 'none';
+        }
+
+        async function detectLanguage() {
+            const text = document.getElementById('textInput').value.trim();
+            
+            if (!text) {
+                alert('Пожалуйста, введите текст для анализа');
+                return;
+            }
+
+            // Показываем загрузку
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('results').style.display = 'none';
+
+            try {
+                const response = await fetch('/detect', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ text: text })
+                });
+
+                const data = await response.json();
+
+                // Скрываем загрузку
+                document.getElementById('loading').style.display = 'none';
+
+                if (data.success) {
+                    displayResults(data);
+                } else {
+                    displayError(data.error);
+                }
+            } catch (error) {
+                document.getElementById('loading').style.display = 'none';
+                displayError('Ошибка соединения: ' + error.message);
+            }
+        }
+
+        function displayResults(data) {
+            const resultsDiv = document.getElementById('results');
+            
+            const detection = data.detection;
+            const analysis = data.analysis;
+
+            let html = `
+                <div class="result-card">
+                    <div class="result-header">
+                        <div class="language-badge">${detection.language_name || 'Не определен'}</div>
+                        <div class="confidence-bar">
+                            <div class="confidence-fill" style="width: ${detection.confidence}%"></div>
+                        </div>
+                        <div class="confidence-text">${detection.confidence}%</div>
+                        <div class="method-badge">${detection.method}</div>
+                    </div>
+                    
+                    <p><strong>Статус:</strong> ${detection.status}</p>
+                    <p><strong>Время анализа:</strong> ${data.timestamp}</p>
+                </div>
+
+                <div class="analysis-section">
+                    <div class="analysis-title">🔍 АНАЛИЗ ПО ТИПАМ ТЕКСТОВ</div>
+                    
+                    <div class="analysis-grid">
+                        <div class="analysis-item">
+                            <h4>Длина текста</h4>
+                            <p>${analysis.text_length} символов</p>
+                        </div>
+                        
+                        <div class="analysis-item">
+                            <h4>Количество слов</h4>
+                            <p>${analysis.word_count} слов</p>
+                        </div>
+                        
+                        <div class="analysis-item">
+                            <h4>Кириллический казахский</h4>
+                            <p>${analysis.has_cyrillic_kazakh ? '✅ Да' : '❌ Нет'}</p>
+                        </div>
+                        
+                        <div class="analysis-item">
+                            <h4>Латинский казахский</h4>
+                            <p>${analysis.has_latin_kazakh ? '✅ Да' : '❌ Нет'}</p>
+                        </div>
+                        
+                        <div class="analysis-item">
+                            <h4>Смешанные языки</h4>
+                            <p>${analysis.has_mixed_languages ? '✅ Да' : '❌ Нет'}</p>
+                        </div>
+                        
+                        <div class="analysis-item">
+                            <h4>Казахские символы</h4>
+                            <p>${analysis.special_chars.length > 0 ? analysis.special_chars.join(', ') : 'Нет'}</p>
+                        </div>
+                    </div>
+            `;
+
+            if (analysis.kazakh_words_found.length > 0) {
+                html += `
+                    <div style="margin-top: 20px;">
+                        <h4>Найденные казахские слова:</h4>
+                        <p>${analysis.kazakh_words_found.join(', ')}</p>
+                    </div>
+                `;
+            }
+
+            if (detection.alternatives && detection.alternatives.length > 0) {
+                html += `
+                    <div class="alternatives">
+                        <h4>Альтернативные варианты:</h4>
+                        ${detection.alternatives.map(alt => `
+                            <div class="alternative-item">
+                                <span>${alt.language}</span>
+                                <span>${alt.confidence}%</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            html += '</div>';
+
+            resultsDiv.innerHTML = html;
+            resultsDiv.style.display = 'block';
+        }
+
+        function displayError(error) {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = `
+                <div class="error">
+                    <strong>Ошибка:</strong> ${error}
+                </div>
+            `;
+            resultsDiv.style.display = 'block';
+        }
+
+        // Обработка Enter в textarea
+        document.getElementById('textInput').addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'Enter') {
+                detectLanguage();
+            }
+        });
+    </script>
+</body>
+</html>

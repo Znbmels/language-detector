@@ -1,0 +1,6 @@
+.idea/
+*.pyc
+*.aux
+*.log
+*.bbl
+*.blg
