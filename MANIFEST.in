@@ -1,0 +1,4 @@
+include mylangdetect/README.md
+include mylangdetect/requirements.txt
+recursive-include mylangdetect/model *.joblib
+
